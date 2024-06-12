@@ -8,10 +8,10 @@ import http.server
 # ------------------------------------------------------------------------------
 # constants
 #
-LOG_FILE_LENGTH = 100
+GATEWAY = '192.168.1.1'
+#GATEWAY = '8.8.8.8'
 
-INDENT = '  '
-SEPARATOR = 80 * '-'
+LOG_FILE_LENGTH = 60*24*3
 
 # ------------------------------------------------------------------------------
 # command line arguments
@@ -22,12 +22,12 @@ parser.add_argument(
     '-v', '--verbose', action='store_true', dest='verbose',
     help = 'verbose console output'
 )
-                                                                 # Ethernet port
+                                                            # HTTP Ethernet port
 parser.add_argument(
     '-p', '--port', default=11123,
     help = 'the HTTP server port'
 )
-                                                                      # log file
+                                                                 # log directory
 parser.add_argument(
     '-l', '--logDir', default=os.path.dirname(os.path.realpath(__file__)),
     help = 'the directory logs'
@@ -47,7 +47,7 @@ log_directory = parser_arguments.logDir
 #
 def IP_address() :
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(('192.168.1.1', 1))
+    s.connect((GATEWAY, 1))
     return(s.getsockname()[0])
 
 #-------------------------------------------------------------------------------
@@ -56,7 +56,6 @@ def IP_address() :
 def log_GPS_info(device, parameters) :
                                                                # build file spec
     log_file_spec = os.sep.join([log_directory, device + '.log'])
-    print("logging to |%s|" % log_file_spec)
                                                                      # read file
     log_file_lines = []
     if os.path.isfile(log_file_spec) :
